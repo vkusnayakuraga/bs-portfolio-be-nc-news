@@ -13,7 +13,7 @@ beforeEach(() => {
 });
 
 describe("Request to non-existent route", () => {
-  test('404: should response with not found when trying to access a non-existent endpoint', () => {
+  test('404: should respond with not found when trying to access a non-existent endpoint', () => {
     return request(app)
       .get("/apo")
       .expect(404)
@@ -24,7 +24,7 @@ describe("Request to non-existent route", () => {
 });
 
 describe("GET /api/topics", () => {
-  test("200: should response with all topics", () => {
+  test("200: should respond with all topics", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
