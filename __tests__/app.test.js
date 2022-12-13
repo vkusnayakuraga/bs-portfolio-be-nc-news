@@ -13,13 +13,13 @@ beforeEach(() => {
 });
 
 describe("Request to non-existent route", () => {
-  test('404: should respond with not found when trying to access a non-existent endpoint', () => {
+  test("404: should respond with not found when trying to access a non-existent endpoint", () => {
     return request(app)
       .get("/apo")
       .expect(404)
       .then(({ body: { message } }) => {
         expect(message).toBe("This page does not exist!");
-      })
+      });
   });
 });
 
@@ -34,7 +34,7 @@ describe("GET /api/topics", () => {
           expect(topic).toEqual(
             expect.objectContaining({
               slug: expect.any(String),
-              description: expect.any(String)
+              description: expect.any(String),
             })
           );
         });
@@ -42,8 +42,8 @@ describe("GET /api/topics", () => {
   });
 });
 
-describe('GET /api/articles', () => {
-  test('200: should respond with array of article objects', () => {
+describe("GET /api/articles", () => {
+  test("200: should respond with array of articles objects", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -62,6 +62,14 @@ describe('GET /api/articles', () => {
             })
           );
         });
+      });
+  });
+  test("200: should respond with articles sorted by date in descending order by default", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("created_at", { descending: true });
       });
   });
 });
