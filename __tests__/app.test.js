@@ -96,7 +96,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/banana")
       .expect(400)
       .then(({ body: { message } }) => {
-        expect(message).toBe("bad request");
+        expect(message).toBe("Bad request!");
       });
   });
   test("404: should respond with a not found message when given a valid but non-existent article id", () => {
