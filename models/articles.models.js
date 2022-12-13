@@ -28,3 +28,20 @@ exports.selectArticleById = (article_id) => {
     return rows[0];
   });
 };
+
+exports.selectCommentsByArticleId = (article_id) => {
+  const queryString = `
+  SELECT comments.comment_id, comments.votes, comments.created_at,  comments.author,  comments.body
+  FROM comments
+  WHERE comments.article_id = $1
+  ORDER BY comments.created_at DESC;`;
+  return db.query(queryString, [article_id]).then(({ rows: comments }) => {
+    if (comments.length === 0) {
+      return Promise.reject({
+        status: 404,
+        message: "This article id does not exist!",
+      });
+    }
+    return comments;
+  });
+};
