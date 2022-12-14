@@ -129,12 +129,20 @@ describe("GET /api/articles/:article_id/comments", () => {
         });
       });
   });
-  test('200: should respond with comments sorted by date in descending order by default', () => {
+  test("200: should respond with comments sorted by date in descending order by default", () => {
     return request(app)
       .get("/api/articles/1/comments")
       .expect(200)
       .then(({ body: { comments } }) => {
         expect(comments).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test("200: should respond with an empty array for an existent article with no comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments).toBeEmpty();
       });
   });
   test("400: should respond with a bad request message when given an invalid article id", () => {
