@@ -5,7 +5,12 @@ const {
   getCommentsByArticleId,
 } = require("./controllers/articles.controllers");
 const { getTopics } = require("./controllers/topics.controllers");
-const { handlePSQLErrors, handleCustomErrors, handle500Errors } = require("./error-handlers");
+const {
+  handle404PathErrors,
+  handlePSQLErrors,
+  handleCustomErrors,
+  handle500Errors,
+} = require("./controllers/errors.controllers");
 
 const app = express();
 
@@ -16,14 +21,12 @@ app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
-// psql errors
+// Not covered endpoints
+app.all("/*", handle404PathErrors);
+
+// Error handling middleware
 app.use(handlePSQLErrors);
-// custom errors
 app.use(handleCustomErrors);
 app.use(handle500Errors);
-
-app.all("/*", (req, res) => {
-  res.status(404).send({ message: "This page does not exist!" });
-});
 
 module.exports = app;
