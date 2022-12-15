@@ -186,4 +186,45 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(comment.created_at).toBeDateString();
       });
   });
+  test("400: should respond with a bad request message when given invalid request body", () => {
+    const newComment = {
+      username: "lurker",
+    };
+
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body: { message } }) => {
+        expect(message).toBe("Bad request!");
+      });
+  });
+  test("400: should respond with a bad request message when given an invalid article id", () => {
+    const newComment = {
+      username: "lurker",
+      body: "Banana",
+    };
+
+    return request(app)
+      .post("/api/articles/banana/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body: { message } }) => {
+        expect(message).toBe("Bad request!");
+      });
+  });
+  test("404: should respond with a not found message when given a valid but non-existent article id", () => {
+    const newComment = {
+      username: "lurker",
+      body: "Thousand",
+    };
+
+    return request(app)
+      .post("/api/articles/1000/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body: { message } }) => {
+        expect(message).toBe("This article id does not exist!");
+      });
+  });
 });

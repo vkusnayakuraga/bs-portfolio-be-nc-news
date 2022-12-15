@@ -4,7 +4,7 @@ exports.handle404PathErrors = (req, res) => {
 
 // psql errors
 exports.handlePSQLErrors = (err, req, res, next) => {
-  if (err.code === "22P02") {
+  if (["22P02", "23502"].includes(err.code)) {
     res.status(400).send({ message: "Bad request!" });
   } else next(err);
 };
