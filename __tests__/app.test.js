@@ -162,3 +162,28 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("201: should respond with a posted comment", () => {
+    const newComment = {
+      username: "lurker",
+      body: "I am lurker",
+    };
+
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body: { comment } }) => {
+        expect(comment).toMatchObject({
+          comment_id: 19,
+          body: "I am lurker",
+          article_id: 1,
+          author: "lurker",
+          votes: 0,
+          created_at: expect.any(String),
+        });
+        expect(comment.created_at).toBeDateString();
+      });
+  });
+});
