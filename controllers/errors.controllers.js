@@ -1,6 +1,6 @@
 exports.handle404PathErrors = (req, res) => {
   res.status(404).send({ message: "This page does not exist!" });
-}
+};
 
 // psql errors
 exports.handlePSQLErrors = (err, req, res, next) => {
@@ -12,7 +12,7 @@ exports.handlePSQLErrors = (err, req, res, next) => {
 exports.handleCustomErrors = (err, req, res, next) => {
   if (err.status && err.message) {
     res.status(err.status).send({ message: err.message });
-  }
+  } else next(err);
 };
 
 exports.handle500Errors = (err, req, res, next) => {
