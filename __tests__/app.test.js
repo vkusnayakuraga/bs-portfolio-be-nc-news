@@ -238,7 +238,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       .send(newComment)
       .expect(404)
       .then(({ body: { message } }) => {
-        expect(message).toBe("Not found! Foreign key constraint violation");
+        expect(message).toBe("Not found!");
       });
   });
 });
