@@ -21,14 +21,14 @@ exports.selectArticleById = (article_id) => {
   WHERE articles.article_id = $1;`;
   return db
     .query(queryString, [article_id])
-    .then(({ rows: [articles], rowCount }) => {
+    .then(({ rows: [article], rowCount }) => {
       if (rowCount === 0) {
         return Promise.reject({
           status: 404,
           message: "This article id does not exist!",
         });
       }
-      return articles;
+      return article;
     });
 };
 
@@ -56,4 +56,17 @@ exports.insertCommentByArticleId = (article_id, body, username) => {
   return db.query(insertCommentQueryString).then(({ rows: [comment] }) => {
     return comment;
   });
+};
+
+exports.updateArticleVotesById = (article_id, inc_votes) => {
+  const queryString = `
+  UPDATE articles
+  SET votes = votes + $1
+  WHERE article_id = $2
+  RETURNING author, title, article_id, body, topic, created_at, votes;`;
+  return db
+    .query(queryString, [inc_votes, article_id])
+    .then(({ rows: [article] }) => {
+      return article;
+    });
 };
