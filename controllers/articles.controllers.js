@@ -3,6 +3,7 @@ const {
   selectArticleById,
   selectCommentsByArticleId,
   insertCommentByArticleId,
+  updateArticleVotesById,
 } = require("../models/articles.models");
 
 exports.getArticles = (req, res, next) => {
@@ -40,11 +41,25 @@ exports.postCommentByArticleId = (req, res, next) => {
   const { username, body } = req.body;
   const promises = [
     selectArticleById(article_id),
-    insertCommentByArticleId(article_id, body, username)
+    insertCommentByArticleId(article_id, body, username),
   ];
   Promise.all(promises)
-    .then(([,comment]) => {
+    .then(([, comment]) => {
       res.status(201).send({ comment });
+    })
+    .catch(next);
+};
+
+exports.patchArticleVotesById = (req, res, next) => {
+  const article_id = req.params.article_id;
+  const { inc_votes } = req.body;
+  const promises = [
+    selectArticleById(article_id),
+    updateArticleVotesById(article_id, inc_votes),
+  ];
+  Promise.all(promises)
+    .then(([, article]) => {
+      res.status(200).send({ article });
     })
     .catch(next);
 };

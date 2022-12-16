@@ -186,7 +186,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(comment.created_at).toBeDateString();
       });
   });
-  test("400: should respond with a bad request message when given invalid request body", () => {
+  test("400: should respond with a bad request message when given an invalid request body", () => {
     const newComment = {
       username: "lurker",
     };
@@ -239,6 +239,89 @@ describe("POST /api/articles/:article_id/comments", () => {
       .expect(404)
       .then(({ body: { message } }) => {
         expect(message).toBe("Not found!");
+      });
+  });
+});
+
+describe("8. PATCH /api/articles/:article_id", () => {
+  test("200: should respond with an updated article", () => {
+    const patchedVotes = { inc_votes: 1 };
+
+    return request(app)
+      .patch("/api/articles/1")
+      .send(patchedVotes)
+      .expect(200)
+      .then(({ body: { article } }) => {
+        expect(article).toEqual({
+          author: "butter_bridge",
+          title: "Living in the shadow of a great man",
+          article_id: 1,
+          body: "I find this existence challenging",
+          topic: "mitch",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 101,
+        });
+      });
+  });
+  test("200: should be able to decrement article's votes property", () => {
+    const patchedVotes = { inc_votes: -100 };
+
+    return request(app)
+      .patch("/api/articles/1")
+      .send(patchedVotes)
+      .expect(200)
+      .then(
+        ({
+          body: {
+            article: { votes },
+          },
+        }) => {
+          expect(votes).toBe(0);
+        }
+      );
+  });
+  test("400: should respond with a bad request message when given an invalid request body", () => {
+    const patchedVotes = {};
+
+    return request(app)
+      .patch("/api/articles/1")
+      .send(patchedVotes)
+      .expect(400)
+      .then(({ body: { message } }) => {
+        expect(message).toBe("Bad request!");
+      });
+  });
+  test("400: should respond with a bad request message when given an invalid value type of inc_votes", () => {
+    const patchedVotes = { inc_votes: "banana" };
+
+    return request(app)
+      .patch("/api/articles/1")
+      .send(patchedVotes)
+      .expect(400)
+      .then(({ body: { message } }) => {
+        expect(message).toBe("Bad request!");
+      });
+  });
+  test("400: should respond with a bad request message when given an invalid article id", () => {
+    const patchedVotes = { inc_votes: 1 };
+
+    return request(app)
+      .patch("/api/articles/banana")
+      .send(patchedVotes)
+      .expect(400)
+      .then(({ body: { message } }) => {
+        expect(message).toBe("Bad request!");
+      });
+  });
+  test("404: should respond with a not found message when given a valid but non-existent article id", () => {
+    const patchedVotes = { inc_votes: 1 };
+
+    return request(app)
+      .patch("/api/articles/1000")
+      .send(patchedVotes)
+      .expect(404)
+      .then(({ body: { message } }) => {
+        expect(message).toBe("This article id does not exist!");
       });
   });
 });
