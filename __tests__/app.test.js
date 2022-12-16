@@ -263,23 +263,6 @@ describe("8. PATCH /api/articles/:article_id", () => {
         });
       });
   });
-  test("200: should be able to increment article's votes property", () => {
-    const patchedVotes = { inc_votes: 1 };
-
-    return request(app)
-      .patch("/api/articles/1")
-      .send(patchedVotes)
-      .expect(200)
-      .then(
-        ({
-          body: {
-            article: { votes },
-          },
-        }) => {
-          expect(votes).toBe(101);
-        }
-      );
-  });
   test("200: should be able to decrement article's votes property", () => {
     const patchedVotes = { inc_votes: -100 };
 
