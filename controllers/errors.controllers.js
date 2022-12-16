@@ -6,6 +6,8 @@ exports.handle404PathErrors = (req, res) => {
 exports.handlePSQLErrors = (err, req, res, next) => {
   if (["22P02", "23502"].includes(err.code)) {
     res.status(400).send({ message: "Bad request!" });
+  } else if(err.code === "23503") {
+    res.status(404).send({ message: "Not found! Foreign key constraint violation" });
   } else next(err);
 };
 // custom errors

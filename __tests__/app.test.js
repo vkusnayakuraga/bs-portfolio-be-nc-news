@@ -227,4 +227,18 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(message).toBe("This article id does not exist!");
       });
   });
+  test("404: should respond with a not found message when given a non-existent username", () => {
+    const newComment = {
+      username: "test_name",
+      body: "My name is test_name",
+    };
+
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body: { message } }) => {
+        expect(message).toBe("Not found! Foreign key constraint violation");
+      });
+  });
 });
