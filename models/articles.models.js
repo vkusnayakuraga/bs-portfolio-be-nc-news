@@ -1,3 +1,4 @@
+const format = require("pg-format");
 const db = require("../db/connection");
 
 exports.selectArticles = () => {
@@ -39,5 +40,20 @@ exports.selectCommentsByArticleId = (article_id) => {
   ORDER BY comments.created_at DESC;`;
   return db.query(queryString, [article_id]).then(({ rows: comments }) => {
     return comments;
+  });
+};
+
+exports.insertCommentByArticleId = (article_id, body, username) => {
+  const commentValues = [body, username, +article_id, 0];
+  const insertCommentQueryString = format(
+    `INSERT INTO comments
+    (body, author, article_id, votes)
+    VALUES
+    (%L)
+    RETURNING *;`,
+    commentValues
+  );
+  return db.query(insertCommentQueryString).then(({ rows: [comment] }) => {
+    return comment;
   });
 };
