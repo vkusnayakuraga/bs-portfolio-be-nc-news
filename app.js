@@ -13,6 +13,7 @@ const {
   handleCustomErrors,
   handle500Errors,
 } = require("./controllers/errors.controllers");
+const { getUsers } = require("./controllers/users.controllers");
 
 const app = express();
 
@@ -27,6 +28,8 @@ app.patch("/api/articles/:article_id", patchArticleVotesById);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
+
+app.get("/api/users", getUsers);
 
 // Not covered endpoints
 app.all("/*", handle404PathErrors);
