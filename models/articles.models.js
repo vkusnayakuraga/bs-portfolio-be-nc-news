@@ -1,15 +1,26 @@
 const format = require("pg-format");
 const db = require("../db/connection");
 
-exports.selectArticles = () => {
-  const selectArticlesQuery = `
+exports.selectArticles = (topic) => {
+  const queryParams = [];
+
+  let queryString = `
   SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, COUNT(comment_id)::INT AS comment_count
   FROM articles
   LEFT JOIN comments
   ON articles.article_id = comments.article_id
+  `;
+
+  if (topic) {
+    queryString += `WHERE articles.topic ILIKE $1`;
+    queryParams.push(topic);
+  }
+
+  queryString += `
   GROUP BY articles.article_id
   ORDER BY articles.created_at DESC;`;
-  return db.query(selectArticlesQuery).then(({ rows: articles }) => {
+
+  return db.query(queryString, queryParams).then(({ rows: articles }) => {
     return articles;
   });
 };

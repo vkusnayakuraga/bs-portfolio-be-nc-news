@@ -72,6 +72,33 @@ describe("GET /api/articles", () => {
         expect(articles).toBeSortedBy("created_at", { descending: true });
       });
   });
+
+  test("200: should respond with an array of articles objects related to the topic query", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toSatisfy((articles) => {
+          return articles.every(({ topic }) => topic === "cats");
+        });
+      });
+  });
+  test("200: should respond with an empty array for an existent topic with no articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeEmpty();
+      });
+  });
+  // test("404: should respond with a not found message when queried a non-existent topic", () => {
+  //   return request(app)
+  //     .get("/api/articles?topic=banana")
+  //     .expect(404)
+  //     .then(({ body: { message } }) => {
+  //       expect(message).toBe("This topic does not exist!");
+  //     });
+  // });
 });
 
 describe("GET /api/articles/:article_id", () => {
