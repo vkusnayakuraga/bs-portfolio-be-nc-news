@@ -2,8 +2,19 @@ const format = require("pg-format");
 const db = require("../db/connection");
 const { selectTopicBySlug } = require("./topics.models");
 
-exports.selectArticles = (topic) => {
+exports.selectArticles = (topic, sort_by = "created_at") => {
   const queryParams = [];
+  const validSortBy = [
+    "author",
+    "title",
+    "created_at",
+    "votes",
+    "comment_count",
+  ];
+
+  if (!validSortBy.includes(sort_by)) {
+    return Promise.reject({ status: 400, message: "Invalid sort_by query!" });
+  }
 
   let queryString = `
   SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, COUNT(comment_id)::INT AS comment_count
@@ -19,7 +30,7 @@ exports.selectArticles = (topic) => {
 
   queryString += `
   GROUP BY articles.article_id
-  ORDER BY articles.created_at DESC;`;
+  ORDER BY articles.${sort_by} DESC;`;
 
   return db.query(queryString, queryParams).then(({ rows: articles }) => {
     if (!articles.length) {

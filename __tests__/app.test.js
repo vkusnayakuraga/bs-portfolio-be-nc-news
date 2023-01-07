@@ -99,6 +99,23 @@ describe("GET /api/articles", () => {
         expect(message).toBe("This topic does not exist!");
       });
   });
+
+  test("200: should respond with articles sorted by given valid sort_by query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=votes")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("votes", { descending: true });
+      });
+  });
+  test("400: should respond with a bad request message when given an invalid sort_by query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=banana")
+      .expect(400)
+      .then(({ body: { message } }) => {
+        expect(message).toBe("Invalid sort_by query!");
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id", () => {
