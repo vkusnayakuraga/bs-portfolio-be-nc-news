@@ -116,6 +116,23 @@ describe("GET /api/articles", () => {
         expect(message).toBe("Invalid sort_by query!");
       });
   });
+
+  test("200: should respond with articles sorted by given valid order query (asc / desc)", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("created_at");
+      });
+  });
+  test("400: should respond with a bad request message when given an invalid order query", () => {
+    return request(app)
+      .get("/api/articles?order=banana")
+      .expect(400)
+      .then(({ body: { message } }) => {
+        expect(message).toBe("Invalid order query!");
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id", () => {

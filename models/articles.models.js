@@ -2,7 +2,7 @@ const format = require("pg-format");
 const db = require("../db/connection");
 const { selectTopicBySlug } = require("./topics.models");
 
-exports.selectArticles = (topic, sort_by = "created_at") => {
+exports.selectArticles = (topic, sort_by = "created_at", order = "desc") => {
   const queryParams = [];
   const validSortBy = [
     "author",
@@ -11,9 +11,14 @@ exports.selectArticles = (topic, sort_by = "created_at") => {
     "votes",
     "comment_count",
   ];
+  const validOrder = ["asc", "desc"];
 
   if (!validSortBy.includes(sort_by)) {
     return Promise.reject({ status: 400, message: "Invalid sort_by query!" });
+  }
+
+  if (!validOrder.includes(order)) {
+    return Promise.reject({ status: 400, message: "Invalid order query!" });
   }
 
   let queryString = `
@@ -30,7 +35,7 @@ exports.selectArticles = (topic, sort_by = "created_at") => {
 
   queryString += `
   GROUP BY articles.article_id
-  ORDER BY articles.${sort_by} DESC;`;
+  ORDER BY articles.${sort_by} ${order};`;
 
   return db.query(queryString, queryParams).then(({ rows: articles }) => {
     if (!articles.length) {
