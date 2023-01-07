@@ -1,5 +1,6 @@
 const format = require("pg-format");
 const db = require("../db/connection");
+const { selectTopicBySlug } = require("./topics.models");
 
 exports.selectArticles = (topic) => {
   const queryParams = [];
@@ -21,6 +22,11 @@ exports.selectArticles = (topic) => {
   ORDER BY articles.created_at DESC;`;
 
   return db.query(queryString, queryParams).then(({ rows: articles }) => {
+    if (!articles.length) {
+      return selectTopicBySlug(topic).then(() => {
+        return articles;
+      });
+    }
     return articles;
   });
 };

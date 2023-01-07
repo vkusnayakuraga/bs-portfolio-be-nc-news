@@ -91,14 +91,14 @@ describe("GET /api/articles", () => {
         expect(articles).toBeEmpty();
       });
   });
-  // test("404: should respond with a not found message when queried a non-existent topic", () => {
-  //   return request(app)
-  //     .get("/api/articles?topic=banana")
-  //     .expect(404)
-  //     .then(({ body: { message } }) => {
-  //       expect(message).toBe("This topic does not exist!");
-  //     });
-  // });
+  test("404: should respond with a not found message when queried a non-existent topic", () => {
+    return request(app)
+      .get("/api/articles?topic=banana")
+      .expect(404)
+      .then(({ body: { message } }) => {
+        expect(message).toBe("This topic does not exist!");
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id", () => {
