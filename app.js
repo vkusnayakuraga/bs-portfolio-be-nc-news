@@ -14,6 +14,7 @@ const {
   handle500Errors,
 } = require("./controllers/errors.controllers");
 const { getUsers } = require("./controllers/users.controllers");
+const { deleteCommentById } = require("./controllers/comments.controllers");
 
 const app = express();
 
@@ -30,6 +31,8 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 
 app.get("/api/users", getUsers);
+
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
 // Not covered endpoints
 app.all("/*", handle404PathErrors);
