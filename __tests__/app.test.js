@@ -23,6 +23,12 @@ describe("Request to non-existent route", () => {
   });
 });
 
+describe("GET /api", () => {
+  test("200: should respond with all available endpoints", () => {
+    return request(app).get("/api").expect(200);
+  });
+});
+
 describe("GET /api/topics", () => {
   test("200: should respond with all topics", () => {
     return request(app)
