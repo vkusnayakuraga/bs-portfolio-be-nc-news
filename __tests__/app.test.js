@@ -407,3 +407,25 @@ describe("GET /api/users", () => {
       });
   });
 });
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("204: should delete the given comment by comment_id and and respond with no content", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+  test("400: should respond with a bad request message when given an invalid article id", () => {
+    return request(app)
+      .delete("/api/comments/banana")
+      .expect(400)
+      .then(({ body: { message } }) => {
+        expect(message).toBe("Bad request!");
+      });
+  });
+  test("404: should respond with a not found message when given a valid but non-existent comment id", () => {
+    return request(app)
+      .delete("/api/comments/1000")
+      .expect(404)
+      .then(({ body: { message } }) => {
+        expect(message).toBe("This comment id does not exist!");
+      });
+  });
+});
