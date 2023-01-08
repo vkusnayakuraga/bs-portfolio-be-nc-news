@@ -1,15 +1,48 @@
 const format = require("pg-format");
 const db = require("../db/connection");
+const { selectTopicBySlug } = require("./topics.models");
 
-exports.selectArticles = () => {
-  const selectArticlesQuery = `
+exports.selectArticles = (topic, sort_by = "created_at", order = "desc") => {
+  const queryParams = [];
+  const validSortBy = [
+    "author",
+    "title",
+    "created_at",
+    "votes",
+    "comment_count",
+  ];
+  const validOrder = ["asc", "desc"];
+
+  if (!validSortBy.includes(sort_by)) {
+    return Promise.reject({ status: 400, message: "Invalid sort_by query!" });
+  }
+
+  if (!validOrder.includes(order)) {
+    return Promise.reject({ status: 400, message: "Invalid order query!" });
+  }
+
+  let queryString = `
   SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, COUNT(comment_id)::INT AS comment_count
   FROM articles
   LEFT JOIN comments
   ON articles.article_id = comments.article_id
+  `;
+
+  if (topic) {
+    queryString += `WHERE articles.topic ILIKE $1`;
+    queryParams.push(topic);
+  }
+
+  queryString += `
   GROUP BY articles.article_id
-  ORDER BY articles.created_at DESC;`;
-  return db.query(selectArticlesQuery).then(({ rows: articles }) => {
+  ORDER BY articles.${sort_by} ${order};`;
+
+  return db.query(queryString, queryParams).then(({ rows: articles }) => {
+    if (!articles.length) {
+      return selectTopicBySlug(topic).then(() => {
+        return articles;
+      });
+    }
     return articles;
   });
 };

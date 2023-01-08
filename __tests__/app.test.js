@@ -72,6 +72,67 @@ describe("GET /api/articles", () => {
         expect(articles).toBeSortedBy("created_at", { descending: true });
       });
   });
+
+  test("200: should respond with an array of articles objects related to the topic query", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toSatisfy((articles) => {
+          return articles.every(({ topic }) => topic === "cats");
+        });
+      });
+  });
+  test("200: should respond with an empty array for an existent topic with no articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeEmpty();
+      });
+  });
+  test("404: should respond with a not found message when queried a non-existent topic", () => {
+    return request(app)
+      .get("/api/articles?topic=banana")
+      .expect(404)
+      .then(({ body: { message } }) => {
+        expect(message).toBe("This topic does not exist!");
+      });
+  });
+
+  test("200: should respond with articles sorted by given valid sort_by query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=votes")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("votes", { descending: true });
+      });
+  });
+  test("400: should respond with a bad request message when given an invalid sort_by query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=banana")
+      .expect(400)
+      .then(({ body: { message } }) => {
+        expect(message).toBe("Invalid sort_by query!");
+      });
+  });
+
+  test("200: should respond with articles sorted by given valid order query (asc / desc)", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("created_at");
+      });
+  });
+  test("400: should respond with a bad request message when given an invalid order query", () => {
+    return request(app)
+      .get("/api/articles?order=banana")
+      .expect(400)
+      .then(({ body: { message } }) => {
+        expect(message).toBe("Invalid order query!");
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id", () => {
