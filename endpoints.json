@@ -1,27 +1,218 @@
 {
   "GET /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
+    "Description": "Serves up a json representation of all the available endpoints of the api"
   },
   "GET /api/topics": {
-    "description": "serves an array of all topics",
-    "queries": [],
-    "exampleResponse": {
-      "topics": [{ "slug": "football", "description": "Footie!" }]
-    }
+    "Description": "Serves an array of all topics",
+    "Example Response": [
+      {
+        "topics": [
+          {
+            "slug": "coding",
+            "Description": "Code is love, code is life"
+          },
+          {
+            "slug": "football",
+            "Description": "FOOTIE!"
+          }
+        ]
+      }
+    ]
+  },
+  "#TODO: POST /api/topics": {
+    "Description": "To be implemented"
   },
   "GET /api/articles": {
-    "description": "serves an array of all topics",
-    "queries": ["author", "topic", "sort_by", "order"],
-    "exampleResponse": {
-      "articles": [
+    "Description": "Serves an array of all articles",
+    "Queries": [
+      {
+        "topic": {
+          "Key": "topic",
+          "Value": "existing topic",
+          "Default Value": "Optional",
+          "Description": "Filters results to only the passed topic"
+        }
+      },
+      {
+        "sort_by": {
+          "Key": "sort_by",
+          "Value": "any valid response key (author, title, article_id, topic, created_at, votes, comment_count)",
+          "Default Value": "created_at",
+          "Description": "The key in which to sort results by"
+        }
+      },
+      {
+        "order": {
+          "Key": "order",
+          "Value": "asc / desc",
+          "Default Value": "desc",
+          "Description": "The order in which articles are sorted"
+        }
+      }
+    ],
+    "Example Response": [
+      {
+        "articles": [
+          {
+            "author": "cooljmessy",
+            "title": "Express.js: A Server-Side JavaScript Framework",
+            "article_id": 8,
+            "topic": "coding",
+            "created_at": "2020-10-05T22:23:00.000Z",
+            "votes": 0,
+            "comment_count": 7
+          },
+          {
+            "author": "jessjelly",
+            "title": "Who are the most followed clubs and players on Instagram?",
+            "article_id": 19,
+            "topic": "football",
+            "created_at": "2020-09-13T12:02:00.000Z",
+            "votes": 0,
+            "comment_count": 13
+          }
+        ]
+      }
+    ]
+  },
+  "#TODO: POST /api/articles": {
+    "Description": "To be implemented"
+  },
+  "GET /api/articles/:article_id": {
+    "Description": "Responds with the requested article",
+    "Example Response": [
+      {
+        "article": {
+          "author": "jessjelly",
+          "title": "Running a Node App",
+          "article_id": 1,
+          "body": "This is part two of a series on how to get up and running with Systemd and Node.js. This part dives deeper into how to successfully run your app with systemd long-term, and how to set it up in a production environment.",
+          "topic": "coding",
+          "created_at": "2020-11-07T06:03:00.000Z",
+          "votes": 0,
+          "comment_count": 7
+        }
+      }
+    ]
+  },
+  "PATCH /api/articles/:article_id": {
+    "Description": "Updates the article's votes property with the value from the request body",
+    "Request Body": {
+      "Accepts the following keys:": [
+        "inc_votes: Integer <strong>required</strong>- The amount of votes to add/remove to/from the article"
+      ],
+      "e.g.": [
         {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": 1527695953341
+          "To increment the current article's vote property by 1": {
+            "inc_votes": 1
+          }
+        },
+        {
+          "To decrement the current article's vote property by 100": {
+            "inc_votes": -100
+          }
         }
       ]
-    }
+    },
+    "Example Response": [
+      "The updated article",
+      {
+        "article": {
+          "author": "jessjelly",
+          "title": "Running a Node App",
+          "article_id": 1,
+          "body": "This is part two of a series on how to get up and running with Systemd and Node.js. This part dives deeper into how to successfully run your app with systemd long-term, and how to set it up in a production environment.",
+          "topic": "coding",
+          "created_at": "2020-11-07T06:03:00.000Z",
+          "votes": 1
+        }
+      }
+    ]
+  },
+  "#TODO: DELETE /api/articles/:article_id": {
+    "Description": "To be implemented"
+  },
+  "GET /api/articles/:article_id/comments": {
+    "Description": "Serves an array of all comments for the requested article",
+    "Example Response": [
+      {
+        "comments": [
+          {
+            "comment_id": 44,
+            "votes": 4,
+            "created_at": "2020-06-15T15:13:00.000Z",
+            "author": "grumpy19",
+            "body": "Error est qui id corrupti et quod enim accusantium minus. Deleniti quae ea magni officiis et qui suscipit non."
+          },
+          {
+            "comment_id": 33,
+            "votes": 4,
+            "created_at": "2019-12-31T21:21:00.000Z",
+            "author": "cooljmessy",
+            "body": "Explicabo perspiciatis voluptatem sunt tenetur maxime aut. Optio totam modi. Perspiciatis et quia."
+          }
+        ]
+      }
+    ]
+  },
+  "POST /api/articles/:article_id/comments": {
+    "Description": "Adds a comment to a chosen article",
+    "Request Body": {
+      "Accepts the following keys:": [
+        "username: String <strong>required</strong>",
+        "body: String <strong>required</strong>"
+      ],
+      "e.g.": [
+        {
+          "": {
+            "username": "grumpy19",
+            "body": "This article is awesome!"
+          }
+        }
+      ]
+    },
+    "Example Response": [
+      {
+        "comment": {
+          "comment_id": 302,
+          "body": "This article is awesome!",
+          "article_id": 1,
+          "author": "grumpy19",
+          "votes": 0,
+          "created_at": "2020-12-16T16:15:00.000Z"
+        }
+      }
+    ]
+  },
+  "DELETE /api/comments/:comment_id": {
+    "Description": "Deletes the requested comment",
+    "Example response": [
+      "Status 204 - No Content\nNo body is returned by this endpoint."
+    ]
+  },
+  "#TODO: PATCH /api/comments/:comment_id": {
+    "Description": "To be implemented"
+  },
+  "GET /api/users": {
+    "Description": "Serves an array of all users",
+    "Example response": [
+      {
+        "users": [
+          {
+            "username": "tickle122",
+            "name": "Tom Tickle",
+            "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953"
+          },
+          {
+            "username": "grumpy19",
+            "name": "Paul Grump",
+            "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/7/78/Mr-Grumpy-3A.PNG/revision/latest?cb=20170707233013"
+          }
+        ]
+      }
+    ]
+  },
+  "#TODO: GET /api/users/:username": {
+    "Description": "To be implemented"
   }
 }

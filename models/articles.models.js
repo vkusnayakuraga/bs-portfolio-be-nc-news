@@ -7,6 +7,8 @@ exports.selectArticles = (topic, sort_by = "created_at", order = "desc") => {
   const validSortBy = [
     "author",
     "title",
+    "article_id",
+    "topic",
     "created_at",
     "votes",
     "comment_count",
