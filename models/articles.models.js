@@ -37,7 +37,7 @@ exports.selectArticles = (topic, sort_by = "created_at", order = "desc") => {
 
   queryString += `
   GROUP BY articles.article_id
-  ORDER BY articles.${sort_by} ${order};`;
+  ORDER BY ${sort_by} ${order};`;
 
   return db.query(queryString, queryParams).then(({ rows: articles }) => {
     if (!articles.length) {
